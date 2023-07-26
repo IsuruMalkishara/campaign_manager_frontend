@@ -1,4 +1,4 @@
-.signup {
+.verification {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -8,31 +8,28 @@
     font-family: "Ubuntu", sans-serif;
   }
   
-  .signup-card {
-    width: 80%;
+  .verification-card {
+    width: 25rem;
     text-align: center;
     margin: 20px;
   }
 
-  .signup-btn{
-    margin-top: 10px;
+  .verification-btn{
+    
     background-color: rgb(173, 216, 230) !important;
     /* border-radius: 20px !important; */
     width: 150px;
     font: rgb(255,255,255);
+    
   }
 
-  .google-login-container {
-    display: flex;
-    justify-content: center;
+  .resend-btn{
+    
+    background-color: rgb(173, 216, 230) !important;
+    /* border-radius: 20px !important; */
+    width: 150px;
+    font: rgb(255,255,255);
+    
   }
+
   
-  .google-login-btn {
-    width: 300px; 
-    text-align: center;
-  }
-
-  .signup-form{
-    display: flex;
-    justify-content: center;
-  }
