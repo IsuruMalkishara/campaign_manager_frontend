@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { GoogleLogin } from 'react-google-login';
 import { Button,Card,Form } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
@@ -9,6 +10,8 @@ const SigninPage = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
+  const navigate=useNavigate();
+
   const handleEmailSignIn = async (e) => {
     e.preventDefault();
     try {
@@ -18,6 +21,8 @@ const SigninPage = () => {
         }
      UserService.signin(data).then(res=>{
         console.warn(res.data);
+        sessionStorage.setItem('token',res.data.data.accessToken);
+        navigate('/dashboard');
      })
     } catch (error) {
       console.error('Error signing in with email and password:', error);
@@ -29,7 +34,7 @@ const SigninPage = () => {
     try {
       UserService.googlesignin(googleUser).then(res=>{
         const data =res.data;
-
+       
       if (data.success) {
         // User signed in successfully, do something here (e.g., redirect to a dashboard)
         console.log('Login successful');

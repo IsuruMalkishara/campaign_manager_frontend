@@ -5,6 +5,8 @@ import SigninPage from './pages/SigninPage';
 import SignupPage from './pages/SignupPage';
 import EmailVerificationPage from './pages/EmailVerificationPage';
 import PhoneVerificationPage from './pages/PhoneVerificationPage';
+import NavbarComponent from './components/NavbarComponent';
+import DashboardPage from './pages/DashboardPage';
 
 function App() {
   return (
@@ -16,6 +18,7 @@ function App() {
               <Route path="/signup" element={<><SignupPage /></>} />
               <Route path="/email-verification" element={<><EmailVerificationPage /></>} />
               <Route path="/phone-verification" element={<><PhoneVerificationPage /></>} />
+              <Route path="/dashboard" element={<><NavbarComponent/><DashboardPage /></>} />
             </Routes>
           </div>
         </Router>
