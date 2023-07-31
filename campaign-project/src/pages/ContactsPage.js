@@ -1,12 +1,12 @@
 import React, { useState,useEffect } from 'react';
-import { Button, FormControl, InputGroup,Table,Card } from 'react-bootstrap';
+import { Button, FormControl, InputGroup,Table,Card,Alert } from 'react-bootstrap';
 import PhoneIcon from '@mui/icons-material/Phone';
 import EditIcon from '@mui/icons-material/Edit';
-import SearchIcon from '@mui/icons-material/Search';
 import IconButton from '@mui/material/IconButton';
 import ContactService from '../services/ContactService';
 import TagService from '../services/TagService';
 import NavbarComponent from '../components/NavbarComponent';
+import AddContactPopup from '../components/AddContactPopup';
 import '../styles/ContactsPage.css';
 
 const ContactsPage = () => {
@@ -14,6 +14,10 @@ const ContactsPage = () => {
   const [contactList,setContactList]=useState([]);
   const [tagList,setTagList]=useState([]);
   const [isAllCheckboxChecked, setAllCheckboxChecked] = useState(false);
+
+  const [isAddContactPopupOpen,setAddContactPopupOpen]=useState(false);
+
+  const [error,setError]=useState('');
 
   useEffect(() => {
     const userId=1;
@@ -30,6 +34,7 @@ const ContactsPage = () => {
     .then(response => {
       console.warn(response.data);
       setContactList(response.data.data.contactList);
+      console.warn("contact list");
       console.warn(contactList);
     })
     .catch(error => {
@@ -44,6 +49,7 @@ const ContactsPage = () => {
     .then(response => {
       console.warn(response.data);
       setTagList(response.data.data.tagList);
+      console.warn("tag List:");
       console.warn(tagList);
     })
     .catch(error => {
@@ -77,6 +83,53 @@ const ContactsPage = () => {
     setTagShow(!isTagShow);
   }
 
+
+  //add contact popup open
+const handleAddContact=()=>{
+  console.warn("add popup open");
+  setAddContactPopupOpen(true);
+}
+
+// Close add  popup
+const closeAddContactPopup = () => {
+  setAddContactPopupOpen(false);
+};
+
+//add contact
+const addContact=(name,phoneNumber,email,selectedTags)=>{
+  setAddContactPopupOpen(false);
+  const userId=1;
+    const token=sessionStorage.getItem('token');
+    const jwtToken='Bearer '+token;
+
+    const data={
+      "name":name,
+      "phoneNumber":phoneNumber,
+      "email":email,
+      "tags":selectedTags,
+      "userId":userId
+    }
+console.warn(data);
+console.warn(jwtToken);
+    ContactService.addContact(userId,jwtToken,data).then(response => {
+      console.warn(response.data);
+     
+      if (response.data.status === 'SUCCESS') {
+        setError('');
+        window.location.reload(false);
+      } else {
+        setError('Email address already used');
+      }
+    }).catch(error => {
+     
+      setError('Email address already used');
+      console.error('Error', error);
+    })
+    .catch(error => {
+      console.error('Error:', error);
+      setError('Email address already used');
+    });
+}
   return (
     <div className='contact' style={{ display: 'flex',
       background: 'rgb(255, 255, 255)',font: 'rgb(0,0,0)',
@@ -109,7 +162,7 @@ const ContactsPage = () => {
                 <FormControl type="search" className="me-2" placeholder="Search" />
               </InputGroup>
               <Button className="button" style={{  background: 'rgb(29,161,242)',
-    color: 'rgb(255,255,255)',width:'200px' }}>+ New Contact</Button>
+    color: 'rgb(255,255,255)',width:'200px' }} onClick={handleAddContact}>+ New Contact</Button>
               <Button className="button" style={{  background: 'rgb(29,161,242)',
     color: 'rgb(255,255,255)',width:'150px' }}>Import</Button>
               <Button className="button" style={{  background: 'rgb(29,161,242)',
@@ -117,7 +170,11 @@ const ContactsPage = () => {
             </div>
           </div>
         </div>
-
+        {error  && (
+                      <Alert variant='danger' style={{  textAlign: 'center'}}>
+                        {error}
+                      </Alert>
+                    )}
         {!isTagShow &&<div className='row' style={{ textAlign:'center' }}>
 
 <div className='col-12' style={{ textAlign:'center' }}>
@@ -272,6 +329,14 @@ const ContactsPage = () => {
       </div>
       </div>
       </div>
+      {isAddContactPopupOpen  && (
+        <AddContactPopup
+          addContact={addContact}
+          tagList={tagList}
+          closeAddContactPopup={closeAddContactPopup}
+          
+        />
+      )}
     </div>
   );
 };

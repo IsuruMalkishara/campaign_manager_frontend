@@ -15,7 +15,15 @@ const url='http://localhost:7777/api/v1/contact';
               }});
     }
 
-    
+   addContact(userId,token,data){
+    return axios.post(url,data,{
+      params: {
+        userId: userId 
+      },headers: {
+          'Authorization': token, 
+          
+        }});
+   } 
     
 }
 export default new ContactService
