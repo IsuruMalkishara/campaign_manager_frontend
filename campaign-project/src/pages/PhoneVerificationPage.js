@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Card, Form, Button, Alert } from 'react-bootstrap';
+import OtpInput from 'react-otp-input';
 import UserService from '../services/UserService';
 import '../styles/PhoneVerificationPage.css';
 
@@ -20,9 +21,9 @@ export default function PhoneVerificationPage() {
   //enter phone number
   const sendOtp = (e) => {
     e.preventDefault();
-
+setError('');
     if (!phone ) {
-      setError('Please enter verification code');
+      setError('Please enter Contact Number');
       return;
     }else if (!validatePhoneNumber(phone)) {
         setError('Invalid Contact Number.');
@@ -39,10 +40,16 @@ export default function PhoneVerificationPage() {
       UserService.addPhone(data).then(res=>{
         console.warn(res.data);
         if (res.data.status === 'SUCCESS') {
-          
+          setError('');
           setVerificationCodeSend(true);
+        }else{
+          setError('Phone number is already used');
         }
-      })
+      }).catch(error => {
+       
+        setError('Phone number is already used');
+        console.error('Error', error);
+      });
     }
 
 
@@ -64,7 +71,7 @@ const validatePhoneNumber = (phone) => {
     e.preventDefault();
 
     if (!code ) {
-      setError('Please enter verification code');
+      setError('Please enter verification Code');
       return;
     }else{
       const data = {
@@ -79,10 +86,16 @@ const validatePhoneNumber = (phone) => {
       UserService.verifyPhone(data).then(res=>{
         console.warn(res.data);
         if (res.data.status === 'SUCCESS') {
-          
+          setError('');
           navigate('/');
+        }else{
+          setError('Invalid Verification Code');
         }
-      })
+      }).catch(error => {
+       
+        setError('Invalid Verification Code');
+        console.error('Error', error);
+      });
     }
 
 
@@ -113,7 +126,7 @@ const validatePhoneNumber = (phone) => {
                 onChange={(event) => setPhone(event.target.value)}
                 style={{ textAlign:'center' }}
               />
-               {error && <Alert variant='danger'>{error}</Alert>} {/* Display error message */}
+               {error.includes('Number') && <Alert variant='danger'>{error}</Alert>} {/* Display error message */}
             </Form.Group>
 <div className='row'>
          <div className='col' style={{ marginTop:'20px',textAlign:'center' }}>
@@ -140,14 +153,25 @@ const validatePhoneNumber = (phone) => {
             <Form.Group  style={{ marginTop:'30px' }}>
               <Form.Label className='label'>Please enter the code you received to your mobile
 </Form.Label>
-              <Form.Control
-                className='input'
-                type='text'
-                value={code}
-                onChange={(event) => setCode(event.target.value)}
-                style={{ textAlign:'center' }}
-              />
-               {error && <Alert variant='danger'>{error}</Alert>} {/* Display error message */}
+<div style={{ display: 'flex', justifyContent: 'center' ,width: '450px',textAlign:'center'}}>
+      <OtpInput
+        value={code}
+        onChange={setCode}
+        numInputs={6}
+        renderSeparator={<span></span>}
+        renderInput={(props) => <input {...props} />}
+        inputStyle={{
+          width: '56px', // Increase the width of each input box
+          height: '56px', // You can adjust the height as needed
+          fontSize: '24px', // Increase the font size for larger digits
+          margin: '0 5px', // Add some space between input boxes
+          borderRadius: '5px', // Optionally, add rounded corners to the input boxes
+          border: '1px solid #ccc', // Optionally, add a border around the input boxes
+          textAlign: 'center', // Center the text inside the input boxes
+        }}
+      />
+    </div>
+               {error.includes('Code') && <Alert variant='danger'>{error}</Alert>} {/* Display error message */}
             </Form.Group>
 <div className='row'>
          <div className='col' style={{ marginTop:'20px',textAlign:'center' }}>
