@@ -1,0 +1,53 @@
+.contact{
+    display: flex;
+    background: rgb(255, 255, 255);
+    font: rgb(0,0,0);
+    font-family: "Ubuntu", sans-serif;
+    width: 100%;
+}
+
+.navbar-container {
+  width: 100%; /* Adjust the width of the navbar as needed */
+  background-color: rgb(0,0,0);
+  color: rgb(255, 255, 255);
+  padding: 20px;
+}
+
+.contact-content {
+  flex: 1; /* This will make the page content take the remaining space */
+  padding: 0 0 0 0; /* Adjust the padding as needed */
+  background-color: rgb(255, 255, 255);
+}
+
+.button-group-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+   
+  }
+  
+  .button {
+    width: 150px;
+    background-color: rgb(29,161,242);
+    color: rgb(255,255,255);
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    margin: 10px;
+  }
+
+  .tag-btn{
+    width: 150px;
+    background-color: rgb(29,161,242);
+    color: rgb(255,255,255);
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    margin: 10px;
+  }
+
+  .tag-card{
+    margin: 10px;
+  }
+  
+  

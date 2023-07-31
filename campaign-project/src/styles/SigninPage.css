@@ -16,7 +16,7 @@
 
   .signin-btn{
     margin-top: 10px;
-    background-color: rgb(173, 216, 230) !important;
+    background-color: rgb(29,161,242) !important;
     /* border-radius: 20px !important; */
     width: 150px;
     font: rgb(255,255,255);
@@ -27,7 +27,7 @@
   .google-login-btn {
     width: 300px;
     text-align: center;
-    background-color: rgb(173, 216, 230) !important;
+    background-color: rgb(29,161,242) !important;
     font: rgb(255,255,255);
   }
 

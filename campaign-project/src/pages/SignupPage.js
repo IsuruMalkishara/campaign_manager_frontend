@@ -60,22 +60,29 @@ const SignupPage = () => {
         "email": email,
         "password": password
       };
-
+    
       console.warn(data);
-
-      UserService.signup(data).then(res=>{
+    
+      UserService.signup(data).then(res => {
         console.warn(res.data);
-
+    
         if (res.data.status === 'SUCCESS') {
-          // If signup is successful, navigate to the email verification page
-          // and pass the data object as state
+          setError('');
           navigate('/email-verification', { state: { userData: data } });
+        } else {
+          setError('Email address already used');
         }
-      })
-      
+      }).catch(error => {
+        // Handle the error without displaying it directly
+        setError('Email address already used');
+        console.error('Error', error);
+      });
+    
     } catch (error) {
+      setError('Email address already used');
       console.error('Error', error);
     }
+    
   };
 
   // Email validation using regex
