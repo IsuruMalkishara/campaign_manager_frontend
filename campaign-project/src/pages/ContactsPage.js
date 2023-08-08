@@ -2,11 +2,12 @@ import React, { useState,useEffect } from 'react';
 import { Button, FormControl, InputGroup,Table,Card,Alert } from 'react-bootstrap';
 import PhoneIcon from '@mui/icons-material/Phone';
 import EditIcon from '@mui/icons-material/Edit';
-import IconButton from '@mui/material/IconButton';
 import ContactService from '../services/ContactService';
 import TagService from '../services/TagService';
 import NavbarComponent from '../components/NavbarComponent';
 import AddContactPopup from '../components/AddContactPopup';
+import SearchIcon from '@mui/icons-material/Search';
+import { InputBase, IconButton, Paper } from '@mui/material';
 import '../styles/ContactsPage.css';
 
 const ContactsPage = () => {
@@ -18,6 +19,8 @@ const ContactsPage = () => {
   const [isAddContactPopupOpen,setAddContactPopupOpen]=useState(false);
 
   const [error,setError]=useState('');
+
+  const [searchTerm, setSearchTerm] = useState('');
 
   useEffect(() => {
     let isMounted = true; // Flag to check if the component is mounted
@@ -33,8 +36,8 @@ const ContactsPage = () => {
         if (isMounted) {
           setContactList(contactsData.data.data.contactList);
           setTagList(tagsData.data.data.tagList);
-          console.warn(contactsData.data.data.contactList);
-          console.warn(tagsData.data.data.tagList);
+          console.warn(contactsData.data);
+          console.warn(tagsData.data);
         }
       } catch (error) {
         console.error('Error:', error);
@@ -97,6 +100,7 @@ const closeAddContactPopup = () => {
 
 //add contact
 const addContact=(name,phoneNumber,email,tags)=>{
+  setError('');
   setAddContactPopupOpen(false);
   const userId=1;
     const token=sessionStorage.getItem('token');
@@ -130,6 +134,16 @@ console.warn(jwtToken);
       setError('Email address already used');
     });
 }
+//search function
+const handleSearch = () => {
+  console.warn(searchTerm);
+};
+
+const handleKeyPress = (event) => {
+  if (event.key === 'Enter') {
+    handleSearch();
+  }
+};
   return (
     <div className='contact' style={{ display: 'flex',
       background: 'rgb(255, 255, 255)',font: 'rgb(0,0,0)',
@@ -155,12 +169,18 @@ console.warn(jwtToken);
             <div>{isTagShow &&<Button className="button" onClick={handleShowHideTags} style={{  background: 'rgb(29,161,242)',
     color: 'rgb(255,255,255)',width:'150px' }}>Hide Tags</Button>}</div>
               {/* search box */}
-              <InputGroup style={{ width:'500px' }}>
-                <InputGroup.Text className="bg-white" >
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" style={{ marginTop:'5px',marginLeft:'5px' }} class="bi bi-search" viewBox="0 0 24 24"> <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/> </svg>
-                </InputGroup.Text>
-                <FormControl type="search" className="me-2" placeholder="Search" />
-              </InputGroup>
+              <Paper component="form" sx={{ p: '2px 4px', display: 'flex', alignItems: 'center' }}>
+      <InputBase
+        placeholder="Search"
+        value={searchTerm}
+        onChange={(e) => setSearchTerm(e.target.value)}
+        onKeyPress={handleKeyPress}
+        sx={{ ml: 1, flex: 1 }}
+      />
+      <IconButton type="button" onClick={handleSearch} sx={{ p: '10px' }}>
+        <SearchIcon/> {/* Use the imported search icon */}
+      </IconButton>
+    </Paper>
               <Button className="button" style={{  background: 'rgb(29,161,242)',
     color: 'rgb(255,255,255)',width:'200px' }} onClick={handleAddContact}>+ New Contact</Button>
               <Button className="button" style={{  background: 'rgb(29,161,242)',

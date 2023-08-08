@@ -11,11 +11,17 @@ const DashboardPage = () => {
 
   return (
     <div className='dashboard'>
-    <div className='navbar-container'>
-    <NavbarComponent />
-  </div>
-         Dashboard Page 
-            
+    
+    <div className='row'>
+          <div className='col-2' style={{ textAlign:'center' }}>
+       <div className='navbar-container'>
+        <NavbarComponent />
+      </div>
+      </div>
+      <div  className='col-10'>
+      Dashboard page
+      </div>
+      </div>
             
             
     </div>
