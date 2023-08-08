@@ -28,7 +28,10 @@ addPhone(data){
 verifyPhone(data){
     return axios.post(url+'/user/auth/verify-phone',data);
 }
-    
+ 
+signup(data){
+    return axios.post(url+'/user/auth/sign-up',data);
+}
     
 }
 export default new UserService

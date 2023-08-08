@@ -2,26 +2,22 @@ import axios from "axios";
 
 
 const url='http://localhost:7777/api/v1/contact';
+const token=sessionStorage.getItem('token');
 
  class ContactService {
-    getAllContacts(userId,token){
-        console.warn("token "+token);
+    getAllContacts(){
         return axios.get(url+'/filter-list', {
-            params: {
-              userId: userId 
-            },headers: {
-                'Authorization': token, 
+            headers: {
+                'Authorization': 'Bearer '+token, 
                 
               }});
     }
 
-   addContact(userId,token,data){
+   addContact(data){
     return axios.post(url,data,{
-      params: {
-        userId: userId 
-      },headers: {
-          'Authorization': token, 
-          
+      headers: {
+          'Authorization': 'Bearer '+token, 
+          'Content-Type': 'application/json',
         }});
    } 
     
