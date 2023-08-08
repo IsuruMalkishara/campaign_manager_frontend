@@ -2,15 +2,14 @@ import axios from "axios";
 
 
 const url='http://localhost:7777/api/v1/contact';
+const token=sessionStorage.getItem('token');
 
  class TagService {
-    getAllTags(userId,token){
+    getAllTags(){
         console.warn("token "+token);
         return axios.get(url+'/tags', {
-            params: {
-              userId: userId 
-            },headers: {
-                'Authorization': token, 
+            headers: {
+                'Authorization': 'Bearer '+token, 
                 
               }});
     }

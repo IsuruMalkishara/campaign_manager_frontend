@@ -1,22 +1,48 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Button, Alert, Form, Modal } from 'react-bootstrap';
 import CancelIcon from '@mui/icons-material/Cancel';
 import IconButton from '@mui/material/IconButton';
+import { WithContext as ReactTags } from 'react-tag-input';
+import '../styles/AddContactPopup.css';
 
-const AddContactPopup = ({ addContact, tagList, closeAddContactPopup }) => {
-  const [tags,setTags]=useState(tagList);
+const KeyCodes = {
+  comma: 188,
+  enter: 13
+};
+
+const delimiters = [KeyCodes.comma, KeyCodes.enter];
+
+const AddContactPopup = ({ addContact, closeAddContactPopup }) => {
+ 
   const [name,setName]=useState('');
   const [phoneNumber,setPhoneNumber]=useState(94);
   const [email,setEmail]=useState('');
-  const [selectedTags, setSelectedTags]=useState([]);
-  const [otherTag, setOtherTag] = useState('');
-  const [showOtherInput, setShowOtherInput] = useState(false);
-  const [isOtherSelect,setOtherSelect]=useState(false);
   const [error,setError]=useState('');
 
-  useEffect(() => {
-   
-  }, []);
+  const [tags, setTags] = useState([]);
+
+  const handleDelete = i => {
+    setTags(tags.filter((tag, index) => index !== i));
+  };
+
+  const handleAddition = tag => {
+  
+    setTags([...tags, tag]);
+  };
+
+  const handleDrag = (tag, currPos, newPos) => {
+    const newTags = tags.slice();
+
+    newTags.splice(currPos, 1);
+    newTags.splice(newPos, 0, tag);
+
+    // re-render
+    setTags(newTags);
+  };
+
+  const handleTagClick = index => {
+    console.log('The tag at index ' + index + ' was clicked');
+  };
 
   
   const handleAdd = () => {
@@ -37,8 +63,9 @@ return
         setError('Invalid Contact Number.');
           return;
       }else{
-console.warn(selectedTags);
-addContact(name,phoneNumber,email,selectedTags);
+
+const tagArr = tags.map(item => item.text);
+addContact(name,phoneNumber,email,tagArr);
     }
   };
 
@@ -55,51 +82,12 @@ const validateEmail = (email) => {
     return phoneNumberRegex.test(phone);
   };
 
-  const handleTagSelection = (tag) => {
-    if (tag === 'other') {
-      setShowOtherInput(true);
-    } else {
-      // Toggle the selection status of the clicked tag
-      setSelectedTags((prevSelectedTags) =>
-        prevSelectedTags.includes(tag)
-          ? prevSelectedTags.filter((t) => t !== tag)
-          : [...prevSelectedTags, tag]
-      );
   
-      // Hide the "Other" input field if it was previously shown
-      setShowOtherInput(false);
-    }
-  };
-
-  const handleOtherTagSelection=()=>{
-    setOtherSelect(true);
-    setShowOtherInput(true);
-  }
-  
-  const handleOtherTagInputChange = (event) => {
-    setOtherTag(event.target.value);
-  };
-  
-  const handleAddOtherTag = () => {
-    if (otherTag.trim() !== '') {
-      // Add the value from the input field to the selectedTags array
-      setSelectedTags((prevSelectedTags) =>
-        prevSelectedTags.includes(otherTag)
-          ? prevSelectedTags.filter((t) => t !== otherTag)
-          : [...prevSelectedTags, otherTag]
-      );
-  
-      // Clear the input field and hide it
-      setOtherTag('');
-      setShowOtherInput(false);
-    }
-  };
-  
-//other checkbox select
 
   return (
-    <Modal show={true} onHide={closeAddContactPopup} size="m">
+    <Modal show={true} onHide={closeAddContactPopup} size="l">
       <Modal.Body>
+        <div style={{ height:'300px',width:'100%' ,overflow: "auto" }}>
       <div className='row'>
                     <div className='col' style={{ textAlign:'right' }}>
                     <IconButton onClick={closeAddContactPopup}>
@@ -179,48 +167,38 @@ const validateEmail = (email) => {
         
       </Form.Group>
       <Form.Group controlId="name" style={{ margin: '5px' }}>
-  <div className='row'>
+  <div className='row' >
     <div className='col-5'>
       <Form.Label style={{ marginTop: '5px' }}>Tags: </Form.Label>
     </div>
     <div className='col-7'>
-      {tags.map((tag) => (
-        <Form.Check
-          key={tag}
-          type="checkbox"
-          id={`tag-${tag.name}`}
-          label={tag.name}
-          checked={selectedTags.includes(tag.name)}
-          onChange={() => handleTagSelection(tag.name)}
+    <div>
+    <ReactTags
+          tags={tags}
+          delimiters={delimiters}
+          handleDelete={handleDelete}
+          handleAddition={handleAddition}
+          handleDrag={handleDrag}
+          handleTagClick={handleTagClick}
+          inputFieldPosition="bottom"
+          autocomplete
+          tagInputProps={{
+            className: 'ReactTags__tagInputField' 
+          }}
         />
-      ))}
-      <Form.Check
-        type="checkbox"
-        id="tag-other"
-        label="Other"
-        checked={isOtherSelect}
-        onChange={()=>handleOtherTagSelection()}
-      />
-      {showOtherInput && (
-        <div>
-          <Form.Control
-            type="text"
-            placeholder="Enter other tag"
-            value={otherTag}
-            onChange={handleOtherTagInputChange}
-          />
-          <Button onClick={handleAddOtherTag} style={{ marginTop:'5px' }}>Save</Button>
-        </div>
-      )}
+      
+      
+    </div>
     </div>
   </div>
 </Form.Group>
 
         </div>
+        </div>
         
       </Modal.Body>
       <Modal.Footer>
-        <Button onClick={handleAdd} style={{ width:'150px' }}>Submit</Button>
+        <Button onClick={handleAdd} style={{ width:'150px',background: 'rgb(29,161,242)' }}>Submit</Button>
       </Modal.Footer>
     </Modal>
   );

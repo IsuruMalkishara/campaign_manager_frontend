@@ -20,42 +20,41 @@ const ContactsPage = () => {
   const [error,setError]=useState('');
 
   useEffect(() => {
-    const userId=1;
-    const token=sessionStorage.getItem('token');
-    const jwtToken='Bearer '+token;
-    getAllContacts(userId,jwtToken);
-    getAllTags(userId,jwtToken);
+    let isMounted = true; // Flag to check if the component is mounted
+
+    const fetchData = async () => {
+      try {
+        const [contactsData, tagsData] = await Promise.all([
+          getAllContacts(),
+          getAllTags()
+        ]);
+
+        // Check if the component is still mounted before updating the state
+        if (isMounted) {
+          setContactList(contactsData.data.data.contactList);
+          setTagList(tagsData.data.data.tagList);
+          console.warn(contactsData.data.data.contactList);
+          console.warn(tagsData.data.data.tagList);
+        }
+      } catch (error) {
+        console.error('Error:', error);
+      }
+    };
+
+    fetchData();
+
+    // Cleanup function to cancel any ongoing requests or subscriptions
+    return () => {
+      isMounted = false; // Set the flag to false when the component is unmounted
+    };
   }, []);
 
-  //get all contacts
-  const getAllContacts=(userId,jwtToken)=>{
-    
-    ContactService.getAllContacts(userId,jwtToken)
-    .then(response => {
-      console.warn(response.data);
-      setContactList(response.data.data.contactList);
-      console.warn("contact list");
-      console.warn(contactList);
-    })
-    .catch(error => {
-      console.error('Error:', error);
-      
-    });
+  const getAllContacts = () => {
+    return ContactService.getAllContacts();
   }
 
-  //get all tags
-  const getAllTags=(userId,jwtToken)=>{
-    TagService.getAllTags(userId,jwtToken)
-    .then(response => {
-      console.warn(response.data);
-      setTagList(response.data.data.tagList);
-      console.warn("tag List:");
-      console.warn(tagList);
-    })
-    .catch(error => {
-      console.error('Error:', error);
-      
-    });
+  const getAllTags = () => {
+    return TagService.getAllTags();
   }
 
   // Function to handle all checkbox change
@@ -86,6 +85,7 @@ const ContactsPage = () => {
 
   //add contact popup open
 const handleAddContact=()=>{
+  setError('');
   console.warn("add popup open");
   setAddContactPopupOpen(true);
 }
@@ -96,7 +96,7 @@ const closeAddContactPopup = () => {
 };
 
 //add contact
-const addContact=(name,phoneNumber,email,selectedTags)=>{
+const addContact=(name,phoneNumber,email,tags)=>{
   setAddContactPopupOpen(false);
   const userId=1;
     const token=sessionStorage.getItem('token');
@@ -106,7 +106,7 @@ const addContact=(name,phoneNumber,email,selectedTags)=>{
       "name":name,
       "phoneNumber":phoneNumber,
       "email":email,
-      "tags":selectedTags,
+      "tags":tags,
       "userId":userId
     }
 console.warn(data);
@@ -135,7 +135,7 @@ console.warn(jwtToken);
       background: 'rgb(255, 255, 255)',font: 'rgb(0,0,0)',
       fontFamily:'"Ubuntu", sans-serif;',width: '100%' }}>
         <div className='row'>
-          <div className='col-2'>
+          <div className='col-2' style={{ textAlign:'center' }}>
        <div className='navbar-container'>
         <NavbarComponent />
       </div>
@@ -177,9 +177,9 @@ console.warn(jwtToken);
                     )}
         {!isTagShow &&<div className='row' style={{ textAlign:'center' }}>
 
-<div className='col-12' style={{ textAlign:'center' }}>
+<div className='col-12' style={{ textAlign:'center',maxHeight: '530px', overflowY: 'auto', maxWidth: '100%' }}>
 {contactList.length > 0 ? (
-<Table striped bordered hover responsive style={{ margin:'10px',maxHeight:'300px' }}>
+<Table striped bordered hover responsive style={{ margin:'10px'}} className='contact-table'>
       <thead>
         <tr>
         <th>
@@ -243,11 +243,12 @@ console.warn(jwtToken);
 
         </div>}
 
-        {isTagShow &&<div className='row'>
+        {isTagShow &&<div className='row' >
         <div className='col-3'>
-<Card className='tag-card'>
+<Card className='tag-card' style={{ maxHeight: '530px', overflowY: 'auto', maxWidth: '100%' }}>
   <Card.Body style={{ textAlign:'center' }}>
     {tagList.length>0 &&<div className='row'>
+      <div className='col' style={{ textAlign:'center' }}>
     <Button   className='tag-btn' style={{  background: 'rgb(29,161,242)',
     color: 'rgb(255,255,255)',width:'150px' }}>
                               All
@@ -258,13 +259,14 @@ console.warn(jwtToken);
                               {tag.name}
                             </Button>
       ))}
+      </div>
     </div>}
   </Card.Body>
 </Card>
         </div>
-<div className='col-9'>
+<div className='col-9' style={{ maxHeight: '530px', overflowY: 'auto' }}>
 {contactList.length > 0 ? (
-<Table striped bordered hover responsive style={{ margin:'10px' }}>
+<Table striped bordered hover responsive style={{ maxHeight: '530px', overflowY: 'auto', maxWidth: '100%' }} className='contact-table'>
       <thead>
         <tr>
         <th>
@@ -332,7 +334,6 @@ console.warn(jwtToken);
       {isAddContactPopupOpen  && (
         <AddContactPopup
           addContact={addContact}
-          tagList={tagList}
           closeAddContactPopup={closeAddContactPopup}
           
         />

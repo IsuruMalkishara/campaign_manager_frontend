@@ -87,7 +87,7 @@ const validatePhoneNumber = (phone) => {
         console.warn(res.data);
         if (res.data.status === 'SUCCESS') {
           setError('');
-          navigate('/');
+          signup(data);
         }else{
           setError('Invalid Verification Code');
         }
@@ -106,6 +106,19 @@ const validatePhoneNumber = (phone) => {
 
   }
 
+  const signup=(data)=>{
+    UserService.signup(data).then(res=>{
+      if (res.data.status === 'SUCCESS') {
+        navigate('/');
+      }else{
+        setError('Invalid Verification Code');
+      }
+    }).catch(error => {
+       
+      setError('Invalid Verification Code');
+      console.error('Error', error);
+    });
+  }
   return (
     <div className='verification'>
         <div>
